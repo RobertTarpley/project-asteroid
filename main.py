@@ -32,6 +32,9 @@ def main():
         
         #cap the frame rate at 60 fps and set dt 
         dt = clock.tick(60) / 1000
+       
+        player.update(dt)
+        
 
 if __name__ == "__main__":
     main()
