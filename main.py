@@ -1,9 +1,11 @@
 # this allows us to use code from the open-source pygame library throughout this file
 import pygame
+import sys
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from circleshape import CircleShape
 
 def main():
     pygame.init()
@@ -45,6 +47,10 @@ def main():
         dt = clock.tick(60) / 1000
        
         updatable_group.update(dt)
+
+        for asteroid in asteroid_group:
+            if asteroid.collides_with(player):
+                sys.exit('Game Over')
         
 
 if __name__ == "__main__":
