@@ -14,8 +14,12 @@ def main():
     clock = pygame.time.Clock()
     dt = 0
 
-    player = Player(x = SCREEN_WIDTH / 2 , y = SCREEN_HEIGHT / 2)
+    updatable_group = pygame.sprite.Group()
+    drawable_group = pygame.sprite.Group()
 
+    Player.containers = (updatable_group, drawable_group)
+
+    player = Player(x = SCREEN_WIDTH / 2 , y = SCREEN_HEIGHT / 2)
 
     while True:
         for event in pygame.event.get():
@@ -25,7 +29,8 @@ def main():
         #fill the screen with black
         screen.fill((0, 0, 0))
         
-        player.draw(screen)
+        for sprite in drawable_group:
+            sprite.draw(screen)
 
         #refresh the display
         pygame.display.flip()
@@ -33,7 +38,7 @@ def main():
         #cap the frame rate at 60 fps and set dt 
         dt = clock.tick(60) / 1000
        
-        player.update(dt)
+        updatable_group.update(dt)
         
 
 if __name__ == "__main__":
