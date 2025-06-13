@@ -13,6 +13,8 @@ def main():
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
+    pygame.font.init()
+    font = pygame.font.SysFont(None, 36)
     
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     
@@ -31,6 +33,8 @@ def main():
 
     player = Player(x = SCREEN_WIDTH / 2 , y = SCREEN_HEIGHT / 2)
     asteroid_field = AsteroidField()
+    
+    score = 0
 
     while True:
         for event in pygame.event.get():
@@ -42,6 +46,9 @@ def main():
         
         for sprite in drawable_group:
             sprite.draw(screen)
+        
+        score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
+        screen.blit(score_surface, (10, 10))
 
         #refresh the display
         pygame.display.flip()
@@ -58,6 +65,7 @@ def main():
                 if bullet.collides_with(asteroid):
                     bullet.kill()
                     asteroid.split()
+                    score += int(asteroid.radius) * 10
                     break
 
 if __name__ == "__main__":
