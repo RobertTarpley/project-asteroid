@@ -7,6 +7,8 @@ from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from circleshape import CircleShape
 from shot import Shot
+from game_over import show_game_over
+from high_score import load_high_score, save_high_score
 
 def main():
     pygame.init()
@@ -15,7 +17,7 @@ def main():
     print(f"Screen height: {SCREEN_HEIGHT}")
     pygame.font.init()
     font = pygame.font.SysFont(None, 36)
-    
+ 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     
     clock = pygame.time.Clock()
@@ -35,6 +37,7 @@ def main():
     asteroid_field = AsteroidField()
     
     score = 0
+    high_score = load_high_score()
 
     while True:
         for event in pygame.event.get():
@@ -47,10 +50,14 @@ def main():
         for sprite in drawable_group:
             sprite.draw(screen)
         
+        #create the score surface
         score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_surface, (10, 10))
-
-        #refresh the display
+        # create the high score surface
+        high_score_surface = font.render(f"High Score: {high_score}", True, (255, 255, 255))
+        screen.blit(high_score_surface, (SCREEN_WIDTH - high_score_surface.get_width() - 10, 10))
+        
+        # refresh the display
         pygame.display.flip()
         
         #cap the frame rate at 60 fps and set dt 
@@ -60,7 +67,12 @@ def main():
 
         for asteroid in asteroid_group:
             if asteroid.collides_with(player):
-                sys.exit('Game Over')
+                if score > high_score:
+                    save_high_score(score)
+                    high_score = score        
+                show_game_over(screen, score, high_score)
+                break
+
             for bullet in shot_group:
                 if bullet.collides_with(asteroid):
                     bullet.kill()
