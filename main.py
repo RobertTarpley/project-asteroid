@@ -36,8 +36,11 @@ def main():
     player = Player(x = SCREEN_WIDTH / 2 , y = SCREEN_HEIGHT / 2)
     asteroid_field = AsteroidField()
     
+    # scoring 
     score = 0
     high_score = load_high_score()
+    score_animation_timer = 0
+    score_changed = False
 
     while True:
         for event in pygame.event.get():
@@ -50,12 +53,33 @@ def main():
         for sprite in drawable_group:
             sprite.draw(screen)
         
-        #create the score surface
-        score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
+        # decrease the timer over time:
+        if score_animation_timer > 0:
+            score_animation_timer -= dt
+        else:
+            score_changed = False
+        
+        if score_changed:
+            scale = 1.5
+        else:
+            scale = 1.0
+        
+        # Render font at scaled size
+        font_size = int(24 * scale)
+        score_font = pygame.font.SysFont("Courier", font_size)
+
+        score_surface = score_font.render(f"Score: {score}", True, (255, 255, 255))
         screen.blit(score_surface, (10, 10))
-        # create the high score surface
+
         high_score_surface = font.render(f"High Score: {high_score}", True, (255, 255, 255))
-        screen.blit(high_score_surface, (SCREEN_WIDTH - high_score_surface.get_width() - 10, 10))
+        screen.blit(high_score_surface, (10, 40))
+
+        #create the score surface
+        #score_surface = font.render(f"Score: {score}", True, (255, 255, 255))
+        #screen.blit(score_surface, (10, 10))
+        # create the high score surface
+        #high_score_surface = font.render(f"High Score: {high_score}", True, (255, 255, 255))
+        #screen.blit(high_score_surface, (SCREEN_WIDTH - high_score_surface.get_width() - 10, 10))
         
         # refresh the display
         pygame.display.flip()
@@ -78,6 +102,8 @@ def main():
                     bullet.kill()
                     asteroid.split()
                     score += int(asteroid.radius) * 10
+                    score_changed = True
+                    score_animation_timer = 0.15
                     break
 
 if __name__ == "__main__":
